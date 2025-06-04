@@ -1,6 +1,6 @@
 
 ```
-This is test. This is the second test. Hopefully this is the last test. This is push notification.
+This is test. This is the second test. Hopefully this is the last test. This is push notification. There should be notification to slack as well.
 ```
 
 <p align="center">
