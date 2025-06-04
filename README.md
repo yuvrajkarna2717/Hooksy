@@ -1,5 +1,5 @@
 # Hooksy
-> Real-time GitHub notifications across Discord, Slack, and Telegram — all from a single webhook.
+> Real-time GitHub notifications across Discord, Slack, and Telegram.
 
 ## 📢 What is Hooksy?
 
