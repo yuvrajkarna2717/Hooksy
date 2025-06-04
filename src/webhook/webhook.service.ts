@@ -10,9 +10,10 @@ export class WebhookService {
   ) {}
 
   async handleWebhook(payload: any) {
-  const message = this.formatMessage(payload);
-  await this.discordService.sendMessage(message);
-}
+    const message = this.formatMessage(payload);
+    if (!message) return;
+    await this.discordService.sendMessage(message);
+  }
 
   formatMessage(payload: any): string {
     const repoName = payload?.repository?.full_name;
@@ -20,7 +21,7 @@ export class WebhookService {
     const branch = payload?.ref?.split('/').pop(); // 'refs/heads/main' → 'main'
     const commit = payload?.head_commit;
 
-    if (!repoName || !commit) return 'Invalid GitHub payload received.';
+    if (!repoName || !commit) return '';
 
     const message = [
       `📦 **[${repoName}](${repoUrl})** just received a push!`,
