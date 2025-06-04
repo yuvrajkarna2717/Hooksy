@@ -1,33 +1,87 @@
 import { Injectable } from '@nestjs/common';
-import { SubscriptionService } from '../subscriptions/subscriptions.service';
 import { DiscordService } from '../discord/discord.service';
 
 @Injectable()
 export class WebhookService {
-  constructor(
-    private subService: SubscriptionService,
-    private discordService: DiscordService,
-  ) {}
+  constructor(private discordService: DiscordService) {}
 
-  async handleWebhook(payload: any) {
-    const repo = payload?.repository?.full_name;
-    if (!repo) return;
-
-    const subs = await this.subService.getByRepo(repo);
-    const message = this.formatMessage(payload);
-
-    for (const sub of subs) {
+  async handleWebhook(payload: any, eventType: string) {
+    const message = this.formatMessageByEvent(eventType, payload);
+    if (message) {
       await this.discordService.sendMessage(message);
+    } else {
+      console.log(`Ignored event: ${eventType}`);
     }
   }
+  formatMessageByEvent(event: string, payload: any): string | null {
+    switch (event) {
+      case 'push':
+        return this.formatPushMessage(payload);
+      case 'pull_request':
+        return this.formatPullRequestMessage(payload);
+      case 'issues':
+        return this.formatIssueMessage(payload);
+      case 'star':
+        return this.formatStarMessage(payload);
+      case 'fork':
+        return this.formatForkMessage(payload);
+      default:
+        return null;
+    }
+  }
+  formatPushMessage(payload: any): string {
+    const repo = payload.repository.full_name;
+    const branch = payload.ref.split('/').pop();
+    const commit = payload.head_commit;
 
-  formatMessage(payload: any): string {
-    if (payload.pull_request) {
-      return `📦 New PR: ${payload.pull_request.title} — ${payload.pull_request.html_url}`;
-    }
-    if (payload.issue) {
-      return `🐞 New Issue: ${payload.issue.title} — ${payload.issue.html_url}`;
-    }
-    return `🔔 New event in ${payload.repository.full_name}`;
+    return [
+      `🚀 **Push to \`${repo}\` on branch \`${branch}\`**`,
+      `✍️ Author: ${commit.author.name}`,
+      `📝 Message: ${commit.message}`,
+      `🔗 [View Commit](${commit.url})`,
+    ].join('\n');
+  }
+
+  formatPullRequestMessage(payload: any): string {
+    const action = payload.action;
+    const pr = payload.pull_request;
+    const repo = payload.repository.full_name;
+
+    return [
+      `📣 **Pull Request \`${action}\` in \`${repo}\`**`,
+      `🔖 Title: ${pr.title}`,
+      `✍️ Author: ${pr.user.login}`,
+      `🔗 [View PR](${pr.html_url})`,
+      `📝 ${pr.body || '_No description provided._'}`,
+    ].join('\n');
+  }
+
+  formatIssueMessage(payload: any): string {
+    const action = payload.action;
+    const issue = payload.issue;
+    const repo = payload.repository.full_name;
+
+    return [
+      `🐞 **Issue \`${action}\` in \`${repo}\`**`,
+      `🔖 Title: ${issue.title}`,
+      `✍️ Author: ${issue.user.login}`,
+      `🔗 [View Issue](${issue.html_url})`,
+      `📝 ${issue.body || '_No description provided._'}`,
+    ].join('\n');
+  }
+
+  formatStarMessage(payload: any): string {
+    const repo = payload.repository.full_name;
+    const sender = payload.sender.login;
+
+    return `⭐ **${sender} starred \`${repo}\`**`;
+  }
+
+  formatForkMessage(payload: any): string {
+    const repo = payload.repository.full_name;
+    const forkee = payload.forkee.full_name;
+    const sender = payload.sender.login;
+
+    return `🍴 **${sender} forked \`${repo}\` → \`${forkee}\`**`;
   }
 }
