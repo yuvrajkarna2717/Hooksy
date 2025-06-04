@@ -8,6 +8,7 @@ export class WebhookService {
   async handleWebhook(payload: any, eventType: string) {
     const message = this.formatMessageByEvent(eventType, payload);
     if (message) {
+      // added coment to test deployed backend
       await this.discordService.sendDiscordMessage(message);
       await this.discordService.sendTelegramMessage(message);
       await this.discordService.sendSlackMessage(message);
