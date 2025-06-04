@@ -7,7 +7,7 @@ export class DiscordController {
 
   @Get('discord')
   async sendTestMessage() {
-    await this.discordService.sendMessage(
+    await this.discordService.sendDiscordMessage(
       '🚀 Test message from Hooksy DEV to Discord!',
     );
     return { status: 'Message sent to Discord!' };

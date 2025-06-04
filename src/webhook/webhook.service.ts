@@ -8,11 +8,14 @@ export class WebhookService {
   async handleWebhook(payload: any, eventType: string) {
     const message = this.formatMessageByEvent(eventType, payload);
     if (message) {
-      await this.discordService.sendMessage(message);
+      await this.discordService.sendDiscordMessage(message);
+      await this.discordService.sendSlackMessage(message);
+      await this.discordService.sendTelegramMessage(message);
     } else {
       console.log(`Ignored event: ${eventType}`);
     }
   }
+
   formatMessageByEvent(event: string, payload: any): string | null {
     switch (event) {
       case 'push':
