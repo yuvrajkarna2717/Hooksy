@@ -7,7 +7,9 @@ export class DiscordController {
 
   @Get('discord')
   async sendTestMessage() {
-    await this.discordService.sendMessage('🚀 Test message from NestJS to Discord!');
+    await this.discordService.sendMessage(
+      '🚀 Test message from Hooksy DEV to Discord!',
+    );
     return { status: 'Message sent to Discord!' };
   }
 }

@@ -7,6 +7,7 @@ export class WebhookController {
 
   @Post()
   async handleWebhook(@Req() req) {
-    return this.webhookService.handleWebhook(req.body);
+    const eventType = req.headers['x-github-event'];
+    return this.webhookService.handleWebhook(req.body, eventType);
   }
 }
