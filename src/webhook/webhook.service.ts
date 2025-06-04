@@ -10,24 +10,28 @@ export class WebhookService {
   ) {}
 
   async handleWebhook(payload: any) {
-    const repo = payload?.repository?.full_name;
-    if (!repo) return;
-
-    const subs = await this.subService.getByRepo(repo);
-    const message = this.formatMessage(payload);
-
-    for (const sub of subs) {
-      await this.discordService.sendMessage(message);
-    }
-  }
+  const message = this.formatMessage(payload);
+  await this.discordService.sendMessage(message);
+}
 
   formatMessage(payload: any): string {
-    if (payload.pull_request) {
-      return `📦 New PR: ${payload.pull_request.title} — ${payload.pull_request.html_url}`;
-    }
-    if (payload.issue) {
-      return `🐞 New Issue: ${payload.issue.title} — ${payload.issue.html_url}`;
-    }
-    return `🔔 New event in ${payload.repository.full_name}`;
+    const repoName = payload?.repository?.full_name;
+    const repoUrl = payload?.repository?.html_url;
+    const branch = payload?.ref?.split('/').pop(); // 'refs/heads/main' → 'main'
+    const commit = payload?.head_commit;
+
+    if (!repoName || !commit) return 'Invalid GitHub payload received.';
+
+    const message = [
+      `📦 **[${repoName}](${repoUrl})** just received a push!`,
+      ``,
+      `🔀 **Branch:** \`${branch}\``,
+      `✍️ **Author:** ${commit.author?.name}`,
+      `📝 **Commit Message:** ${commit.message}`,
+      `🔗 [View Commit](${commit.url})`,
+      `🕒 **Timestamp:** ${commit.timestamp}`,
+    ].join('\n');
+
+    return message;
   }
 }
