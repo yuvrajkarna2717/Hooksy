@@ -18,6 +18,7 @@ export class DiscordService {
   }
 
   async sendSlackMessage(content: string) {
+    
     const slackWebhookUrl =
       this.configService.get<string>('SLACK_WEB_HOOK_URI');
     if (!slackWebhookUrl) {
