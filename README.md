@@ -13,7 +13,7 @@ GitWhistle is a powerful webhook notification service that bridges GitHub reposi
 - **Event Coverage**: Track pushes, pull requests, issues, comments, and more
 - **Extensible Design**: Easily add support for additional platforms with minimal code changes
 
-## 🚀 Why Choose Hooksy?
+## 🚀 Why Choose GitWhistle?
 
 - **Streamline communication** by consolidating GitHub updates into your team's chat environments
 - **Avoid missing critical repo activities** without constantly monitoring GitHub
