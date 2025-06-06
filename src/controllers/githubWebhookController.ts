@@ -3,8 +3,8 @@ import { WebhookService } from "../services/webhookService";
 
 const webhookService = new WebhookService();
 export const githubWebHook = async (req: Request, res: Response) => {
-  const eventType = req.header("X-GitHub-Event");
-  if (!eventType) return res.status(400).send("Missing GitHub Event Type");
+  const eventType = req.header("X-GitHub-Event") || "";
+  if (!eventType)  res.status(400).send("Missing GitHub Event Type");
 
   try {
     await webhookService.handleWebhook(req.body, eventType);
