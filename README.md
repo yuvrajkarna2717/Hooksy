@@ -3,7 +3,7 @@
 
 ## 📢 What is GitWhistle?
 
-Hooksy is a powerful webhook notification service that bridges GitHub repository events with popular chat platforms. Stay instantly informed about repository activities wherever your team communicates.
+GitWhistle is a powerful webhook notification service that bridges GitHub repository events with popular chat platforms. Stay instantly informed about repository activities wherever your team communicates.
 
 ## ✨ Key Features
 
