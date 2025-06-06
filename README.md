@@ -1,4 +1,4 @@
-# Hooksy
+# GitWhistle
 > Real-time GitHub notifications across Discord, Slack, and Telegram.
 
 ## 📢 What is Hooksy?
