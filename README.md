@@ -1,4 +1,4 @@
-# GitWhistle hello
+# GitWhistle
 > Real-time GitHub notifications across Discord, Slack, and Telegram.
 
 ## 📢 What is GitWhistle?
