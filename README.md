@@ -1,7 +1,7 @@
 # GitWhistle
 > Real-time GitHub notifications across Discord, Slack, and Telegram.
 
-## 📢 What is Hooksy?
+## 📢 What is GitWhistle?
 
 Hooksy is a powerful webhook notification service that bridges GitHub repository events with popular chat platforms. Stay instantly informed about repository activities wherever your team communicates.
 
