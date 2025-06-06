@@ -10,13 +10,35 @@ export class WebhookService {
   async handleWebhook(payload: any, eventType: string): Promise<void> {
     const message = this.formatMessageByEvent(eventType, payload);
 
-    if (message) {
-      await this.notifyService.sendDiscordMessage(message);
-      await this.notifyService.sendTelegramMessage(message);
-      await this.notifyService.sendSlackMessage(message);
-    } else {
+    if (!message) {
       console.log(`Ignored event: ${eventType}`);
+      return;
     }
+
+    const results: string[] = [];
+
+    try {
+      await this.notifyService.sendDiscordMessage(message);
+      results.push("✅ Discord sent");
+    } catch (error) {
+      console.error("❌ Failed to send Discord message:", error);
+    }
+
+    try {
+      await this.notifyService.sendTelegramMessage(message);
+      results.push("✅ Telegram sent");
+    } catch (error) {
+      console.error("❌ Failed to send Telegram message:", error);
+    }
+
+    try {
+      await this.notifyService.sendSlackMessage(message);
+      results.push("✅ Slack sent");
+    } catch (error) {
+      console.error("❌ Failed to send Slack message:", error);
+    }
+
+    console.log("Notification results:", results.join(" | "));
   }
 
   private formatMessageByEvent(event: string, payload: any): string | null {
