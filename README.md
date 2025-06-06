@@ -55,4 +55,4 @@ MIT License © 2025 Yuvraj Karna
 
 ---
 
-**Hooksy**: _Keep your finger on the pulse of your repositories_
+**GitWhistle**: _Keep your finger on the pulse of your repositories_
