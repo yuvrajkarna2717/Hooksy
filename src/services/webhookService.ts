@@ -1,41 +1,44 @@
-import { Injectable } from '@nestjs/common';
-import { DiscordService } from '../discord/discord.service';
+import { NotifyService } from "./notifyService";
 
-@Injectable()
 export class WebhookService {
-  constructor(private discordService: DiscordService) {}
+  private notifyService: NotifyService;
 
-  async handleWebhook(payload: any, eventType: string) {
+  constructor() {
+    this.notifyService = new NotifyService();
+  }
+
+  async handleWebhook(payload: any, eventType: string): Promise<void> {
     const message = this.formatMessageByEvent(eventType, payload);
+
     if (message) {
-      // added coment to test deployed backend
-      await this.discordService.sendDiscordMessage(message);
-      await this.discordService.sendTelegramMessage(message);
-      await this.discordService.sendSlackMessage(message);
+      await this.notifyService.sendDiscordMessage(message);
+      await this.notifyService.sendTelegramMessage(message);
+      await this.notifyService.sendSlackMessage(message);
     } else {
       console.log(`Ignored event: ${eventType}`);
     }
   }
 
-  formatMessageByEvent(event: string, payload: any): string | null {
+  private formatMessageByEvent(event: string, payload: any): string | null {
     switch (event) {
-      case 'push':
+      case "push":
         return this.formatPushMessage(payload);
-      case 'pull_request':
+      case "pull_request":
         return this.formatPullRequestMessage(payload);
-      case 'issues':
+      case "issues":
         return this.formatIssueMessage(payload);
-      case 'star':
+      case "star":
         return this.formatStarMessage(payload);
-      case 'fork':
+      case "fork":
         return this.formatForkMessage(payload);
       default:
         return null;
     }
   }
-  formatPushMessage(payload: any): string {
+
+  private formatPushMessage(payload: any): string {
     const repo = payload.repository.full_name;
-    const branch = payload.ref.split('/').pop();
+    const branch = payload.ref?.split("/")?.pop();
     const commit = payload.head_commit;
 
     return [
@@ -43,10 +46,10 @@ export class WebhookService {
       `✍️ Author: ${commit.author.name}`,
       `📝 Message: ${commit.message}`,
       `🔗 [View Commit](${commit.url})`,
-    ].join('\n');
+    ].join("\n");
   }
 
-  formatPullRequestMessage(payload: any): string {
+  private formatPullRequestMessage(payload: any): string {
     const action = payload.action;
     const pr = payload.pull_request;
     const repo = payload.repository.full_name;
@@ -56,11 +59,11 @@ export class WebhookService {
       `🔖 Title: ${pr.title}`,
       `✍️ Author: ${pr.user.login}`,
       `🔗 [View PR](${pr.html_url})`,
-      `📝 ${pr.body || '_No description provided._'}`,
-    ].join('\n');
+      `📝 ${pr.body || "_No description provided._"}`,
+    ].join("\n");
   }
 
-  formatIssueMessage(payload: any): string {
+  private formatIssueMessage(payload: any): string {
     const action = payload.action;
     const issue = payload.issue;
     const repo = payload.repository.full_name;
@@ -70,18 +73,18 @@ export class WebhookService {
       `🔖 Title: ${issue.title}`,
       `✍️ Author: ${issue.user.login}`,
       `🔗 [View Issue](${issue.html_url})`,
-      `📝 ${issue.body || '_No description provided._'}`,
-    ].join('\n');
+      `📝 ${issue.body || "_No description provided._"}`,
+    ].join("\n");
   }
 
-  formatStarMessage(payload: any): string {
+  private formatStarMessage(payload: any): string {
     const repo = payload.repository.full_name;
     const sender = payload.sender.login;
 
     return `⭐ **${sender} starred \`${repo}\`**`;
   }
 
-  formatForkMessage(payload: any): string {
+  private formatForkMessage(payload: any): string {
     const repo = payload.repository.full_name;
     const forkee = payload.forkee.full_name;
     const sender = payload.sender.login;
